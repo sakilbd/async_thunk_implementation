@@ -9,7 +9,7 @@ const initialState = {
 };
 
 // create async thunk
-const fetchVideos = createAsyncThunk("post/fetchVideos", async() => {
+const fetchVideos = createAsyncThunk("video/fetchVideos", async() => {
     try {
         const response = await fetch("http://localhost:9000/videos");
         const videos = await response.json();
@@ -21,7 +21,7 @@ const fetchVideos = createAsyncThunk("post/fetchVideos", async() => {
             })
             .join("&");
 
-        console.log("Endpoint : " + searchEndpointGenerate);
+        // console.log("Endpoint : " + searchEndpointGenerate);
 
         const searchFinalUrl = `http://localhost:9000/videos?${searchEndpointGenerate}`;
 
