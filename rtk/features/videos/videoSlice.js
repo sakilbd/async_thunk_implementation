@@ -10,15 +10,36 @@ const initialState = {
 
 // create async thunk
 const fetchVideos = createAsyncThunk("post/fetchVideos", async() => {
-    const response = await fetch(
-        "http://localhost:9000/videos"
-    );
-    const videos = await response.json();
-    const tags = videos.tags;
+    try {
+        const response = await fetch("http://localhost:9000/videos");
+        const videos = await response.json();
+        const tags = videos.tags;
 
-    console.log(tags);
+        let searchEndpointGenerate = tags
+            .map((item) => {
+                return `tags_like=${item}`;
+            })
+            .join("&");
 
-    return tags;
+        console.log("Endpoint : " + searchEndpointGenerate);
+
+        const searchFinalUrl = `http://localhost:9000/videos?${searchEndpointGenerate}`;
+
+        const searchVideos = await fetch(searchFinalUrl);
+
+        const searchResults = await searchVideos.json();
+
+        const sortedSearchResult = searchResults.sort((a, b) => {
+            const { views: aViews } = a;
+            const { views: bViews } = b;
+            return parseFloat(aViews.split("k")) - parseFloat(bViews.split("k"));
+        });
+
+        return (sortedSearchResult);
+    } catch (err) {
+        // console.log(err);
+        return err;
+    }
 });
 
 const videoSlice = createSlice({
